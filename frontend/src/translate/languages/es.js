@@ -262,7 +262,7 @@ const messages = {
         },
       },
       ticketsList: {
-        pendingHeader: "En espera",
+        pendingHeader: "Departamento",
         assignedHeader: "Trabajando en",
         noTicketsTitle: "¡Nada acá!",
         connectionTitle: "Conexión que se está utilizando actualmente.",
@@ -317,11 +317,11 @@ const messages = {
         confirmationModal: {
           deleteTitle: "Eliminar",
           deleteMessage:
-            "¿Estás seguro? ¡Esta acción no se puede revertir! Los chats en ese departamento seguirán existiendo, pero ya no tendrán ningun departamento asignada.",
+            "¿Estás seguro? ¡Esta acción no se puede revertir! Los tickets en ese departamento seguirán existiendo, pero ya no tendrán ningun departamento asignada.",
         },
       },
       queueSelect: {
-        inputLabel: "Cola",
+        inputLabel: "Departamentos",
       },
       quickAnswers: {
         title: "Respuestas rápidas",
@@ -361,7 +361,7 @@ const messages = {
         confirmationModal: {
           deleteTitle: "Borrar",
           deleteMessage:
-            "Toda la información del usuario se perderá. Los chats abiertos de los usuarios se moverán al departamento.",
+            "Toda la información del usuario se perderá. Los tickets abiertos de los usuarios se moverán al departamento.",
         },
       },
       settings: {
