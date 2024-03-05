@@ -8,10 +8,12 @@ import {
   PrimaryKey,
   Default,
   BelongsTo,
-  ForeignKey
+  ForeignKey,
+  HasMany
 } from "sequelize-typescript";
 import Contact from "./Contact";
 import Ticket from "./Ticket";
+import OldMessage from "./OldMessage";
 
 @Table
 class Message extends Model<Message> {
@@ -49,6 +51,10 @@ class Message extends Model<Message> {
   @Column
   isDeleted: boolean;
 
+  @Default(false)
+  @Column
+  isEdited: boolean;
+
   @CreatedAt
   @Column(DataType.DATE(6))
   createdAt: Date;
@@ -77,6 +83,9 @@ class Message extends Model<Message> {
 
   @BelongsTo(() => Contact, "contactId")
   contact: Contact;
+
+  @HasMany(() => OldMessage)
+  oldMessages: OldMessage[];
 }
 
 export default Message;
