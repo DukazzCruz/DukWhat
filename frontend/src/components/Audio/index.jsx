@@ -55,6 +55,7 @@ export default function({url}) {
         <>
             <audio ref={audioRef} controls>
                 <source src={url} type="audio/ogg"></source>
+                <source src={url.replace('.ogg','.mp3')} type="audio/mpeg"></source>
             </audio>
             {showButtonRate && <Button style={{marginLeft: "5px", marginTop: "-45px"}} onClick={toogleRate}>{audioRate}x</Button>}
         </>
