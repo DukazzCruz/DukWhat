@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { Picker } from "emoji-mart";
 import MicRecorder from "mic-recorder-to-mp3";
 import clsx from "clsx";
+import PropTypes from "prop-types";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
@@ -36,6 +37,7 @@ import { ReplyMessageContext } from "../../context/ReplyingMessage/ReplyingMessa
 import { AuthContext } from "../../context/Auth/AuthContext";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import toastError from "../../errors/toastError";
+import { EditMessageContext } from "../../context/EditingMessage/EditingMessageContext";
 
 const Mp3Recorder = new MicRecorder({ bitRate: 128 });
 
@@ -210,19 +212,21 @@ const MessageInput = ({ ticketStatus }) => {
   const [showEmoji, setShowEmoji] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recording, setRecording] = useState(false);
-  const [quickAnswers, setQuickAnswer] = useState([]);
+  const [quickAnswers, setQuickAnswers] = useState([]);
   const [typeBar, setTypeBar] = useState(false);
   const inputRef = useRef();
   const [anchorEl, setAnchorEl] = useState(null);
   const { setReplyingMessage, replyingMessage } =
     useContext(ReplyMessageContext);
+  const { setEditingMessage, editingMessage } =
+    useContext(EditMessageContext);
   const { user } = useContext(AuthContext);
 
   const [signMessage, setSignMessage] = useLocalStorage("signOption", true);
 
   useEffect(() => {
     inputRef.current.focus();
-  }, [replyingMessage]);
+  }, [replyingMessage, editingMessage]);
 
   useEffect(() => {
     inputRef.current.focus();
@@ -231,8 +235,9 @@ const MessageInput = ({ ticketStatus }) => {
       setShowEmoji(false);
       setMedias([]);
       setReplyingMessage(null);
+      setEditingMessage(null);
     };
-  }, [ticketId, setReplyingMessage]);
+  }, [ticketId, setReplyingMessage, setEditingMessage]);
 
   const handleChangeInput = (e) => {
     setInputMessage(e.target.value);
@@ -299,7 +304,12 @@ const MessageInput = ({ ticketStatus }) => {
       quotedMsg: replyingMessage,
     };
     try {
-      await api.post(`/messages/${ticketId}`, message);
+      if (editingMessage !== null) {
+        await api.post(`/messages/edit/${editingMessage.id}`, message);
+      }
+      else {
+        await api.post(`/messages/${ticketId}`, message);
+      }
     } catch (err) {
       toastError(err);
     }
@@ -308,6 +318,7 @@ const MessageInput = ({ ticketStatus }) => {
     setShowEmoji(false);
     setLoading(false);
     setReplyingMessage(null);
+    setEditingMessage(null);
   };
 
   const handleStartRecording = async () => {
@@ -329,7 +340,7 @@ const MessageInput = ({ ticketStatus }) => {
         const { data } = await api.get("/quickAnswers/", {
           params: { searchParam: inputMessage.substring(1) },
         });
-        setQuickAnswer(data.quickAnswers);
+        setQuickAnswers(data.quickAnswers);
         if (data.quickAnswers.length > 0) {
           setTypeBar(true);
         } else {
@@ -407,7 +418,10 @@ const MessageInput = ({ ticketStatus }) => {
           aria-label="showRecorder"
           component="span"
           disabled={loading || ticketStatus !== "open"}
-          onClick={() => setReplyingMessage(null)}
+          onClick={() => {
+            setReplyingMessage(null);
+            setEditingMessage(null);
+          }}
         >
           <ClearIcon className={classes.sendMessageIcons} />
         </IconButton>
@@ -449,7 +463,7 @@ const MessageInput = ({ ticketStatus }) => {
   else {
     return (
       <Paper square elevation={0} className={classes.mainWrapper}>
-        {replyingMessage && renderReplyingMessage(replyingMessage)}
+        {(replyingMessage && renderReplyingMessage(replyingMessage)) || (editingMessage && renderReplyingMessage(editingMessage))}
         <div className={classes.newMessageBox}>
           <Hidden only={["sm", "xs"]}>
             <IconButton
@@ -670,5 +684,9 @@ const MessageInput = ({ ticketStatus }) => {
     );
   }
 };
+
+MessageInput.propTypes = {
+  ticketStatus: PropTypes.string
+}
 
 export default MessageInput;
