@@ -29,6 +29,21 @@ const EditWhatsAppMessage = async (messageId: string, newBody: string): Promise<
   } catch (err) {
     throw new AppError("ERR_EDITING_WAPP_MSG");
   }
+  await message.update({ body: newBody });
+  if (ticket.lastMessage === message.body) {
+    await ticket.update({ lastMessage: newBody });
+  }
+
+  // Buscar el mensaje más reciente en el ticket
+  const mostRecentMessage = await Message.findOne({
+    where: { ticketId: ticket.id },
+    order: [['updatedAt', 'DESC']]
+  });
+
+  // Si el mensaje más reciente es el que estamos editando
+  if (mostRecentMessage && mostRecentMessage.id === messageId) {
+    await ticket.update({ lastMessage: newBody });
+  }
 
   return message;
 };
