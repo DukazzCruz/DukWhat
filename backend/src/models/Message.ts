@@ -49,6 +49,11 @@ class Message extends Model<Message> {
   @Column
   isDeleted: boolean;
 
+  @Default(false)
+  @Column
+  isEdited: boolean;
+
+
   @CreatedAt
   @Column(DataType.DATE(6))
   createdAt: Date;
