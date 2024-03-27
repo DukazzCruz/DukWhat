@@ -18,6 +18,12 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [messageHistoryOpen, setMessageHistoryOpen] = useState(false);
 
+
+  const canEditMessage = () => {
+    const timeDiff = new Date() - new Date(message.updatedAt);
+    return timeDiff <= 15 * 60 * 1000; // 15 minutos en milisegundos
+  };
+
   const handleDeleteMessage = async () => {
     try {
       await api.delete(`/messages/${message.id}`);
@@ -36,10 +42,15 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
     handleClose();
   };
 
-  const handleEditMessage = async () => {
-    setEditingMessage(message);
+  const handleEditMessage = () => {
+    if (canEditMessage()) {
+      setEditingMessage(message);
+    } else {
+      toastError(new Error(i18n.t("messageOptionsMenu.edit.error.timeExceeded")));
+    }
     handleClose();
-  }
+  };
+
 
   const handleOpenMessageHistoryModal = (e) => {
     setMessageHistoryOpen(true);
@@ -80,9 +91,11 @@ const MessageOptionsMenu = ({ message, menuOpen, handleClose, anchorEl }) => {
           <MenuItem key="delete" onClick={handleOpenConfirmationModal}>
             {i18n.t("messageOptionsMenu.delete")}
           </MenuItem>,
-          <MenuItem key="edit" onClick={handleEditMessage}>
-            {i18n.t("messageOptionsMenu.edit")}
-          </MenuItem>
+          canEditMessage() && (
+            <MenuItem key="edit" onClick={handleEditMessage}>
+              {i18n.t("messageOptionsMenu.edit")}
+            </MenuItem>
+          )
         ]}
         {message.oldMessages?.length > 0 && (
           <MenuItem key="history" onClick={handleOpenMessageHistoryModal}>
