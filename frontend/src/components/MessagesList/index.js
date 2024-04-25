@@ -423,7 +423,17 @@ const MessagesList = ({ ticketId, isGroup }) => {
   };
 
   const checkMessageMedia = (message) => {
-    if (message.mediaType === "location" && message.body.split('|').length >= 2) {
+    // Imprimir la URL del medio en la consola
+    console.log("Media URL:", message.mediaUrl);
+    if (message.mediaType === "sticker") {
+      return (
+        <img
+          src={message.mediaUrl}
+          alt="Sticker"
+          style={{ maxWidth: 200, maxHeight: 200 }}
+        />
+      );
+    } else if (message.mediaType === "location" && message.body.split('|').length >= 2) {
       let locationParts = message.body.split('|')
       let imageLocation = locationParts[0]
       let linkLocation = locationParts[1]
