@@ -76,6 +76,7 @@ export const update = async (
   res: Response
 ): Promise<Response> => {
   const { whatsappId } = req.params;
+<<<<<<< HEAD
   const {
     name,
     status,
@@ -89,15 +90,41 @@ export const update = async (
   const { whatsapp, oldDefaultWhatsapp } = await UpdateWhatsAppService({
     whatsappId,
     whatsappData: {
+=======
+  export const update = async (
+    req: Request, 
+    res: Response
+  ): Promise<Response> => {
+    const { whatsappId } = req.params;
+    const {
+>>>>>>> 166f3842b1289c71e47e20fc354da26013961d13
       name,
       status,
       isDefault,
       greetingMessage,
       farewellMessage,
       queueIds,
+<<<<<<< HEAD
       color  // Pasar color al servicio
     }
   });
+=======
+      color  // Añadir color aquí
+    }: WhatsappData & { color?: string } = req.body;  // Asegurarse de incluirlo en la interfaz
+  
+    const { whatsapp, oldDefaultWhatsapp } = await UpdateWhatsAppService({
+      whatsappId,
+      whatsappData: {
+        name,
+        status,
+        isDefault,
+        greetingMessage,
+        farewellMessage,
+        queueIds,
+        color  // Pasar color al servicio
+      }
+    });
+>>>>>>> 166f3842b1289c71e47e20fc354da26013961d13
 
 const io = getIO();
 io.emit("whatsapp", {
