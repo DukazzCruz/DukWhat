@@ -14,6 +14,7 @@ interface WhatsappData {
   greetingMessage?: string;
   farewellMessage?: string;
   queueIds?: number[];
+  color?: string; 
 }
 
 interface Request {
