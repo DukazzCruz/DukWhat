@@ -1,15 +1,15 @@
 import {
-    Table,
-    Column,
-    CreatedAt,
-    UpdatedAt,
-    Model,
-    PrimaryKey,
-    ForeignKey,
-    BelongsTo,
-    DataType,
-    AutoIncrement
-  } from "sequelize-typescript";
+  Table,
+  Column,
+  CreatedAt,
+  UpdatedAt,
+  Model,
+  PrimaryKey,
+  ForeignKey,
+  BelongsTo,
+  DataType,
+  AutoIncrement
+} from "sequelize-typescript";
 
 import Message from "./Message";
 
