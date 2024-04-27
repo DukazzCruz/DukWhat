@@ -59,7 +59,10 @@ class Whatsapp extends Model<Whatsapp> {
   isDefault: boolean;
 
   @AllowNull
-  @Column(DataType.STRING)
+  @Column({
+    type: DataType.STRING,
+    defaultValue: "#2576D2" // Valor por defecto para el color
+  })
   color: string;
 
   @CreatedAt

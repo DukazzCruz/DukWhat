@@ -22,6 +22,7 @@ import MarkdownWrapper from "../MarkdownWrapper";
 import { Tooltip } from "@material-ui/core";
 import { AuthContext } from "../../context/Auth/AuthContext";
 import toastError from "../../errors/toastError";
+import { getContrastYIQ } from "../../utils/getContrastYIQ";
 
 const useStyles = makeStyles(theme => ({
 	ticket: {
@@ -212,7 +213,13 @@ const TicketListItem = ({ ticket }) => {
 								</Typography>
 							)}
 							{ticket.whatsappId && (
-								<div className={classes.userTag} title={i18n.t("ticketsList.connectionTitle")}>{ticket.whatsapp?.name}</div>
+								<div className={classes.userTag} 
+									 style={{backgroundColor:ticket.whatsapp?.color,
+										color: getContrastYIQ(ticket.whatsapp?.color || '#FFFFFF') // Utiliza un color de fondo predeterminado si es necesario
+									}} 
+									 title={i18n.t("ticketsList.connectionTitle")}>
+										{ticket.whatsapp?.name}
+										</div>
 							)}
 						</span>
 					}

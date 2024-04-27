@@ -33,7 +33,7 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     farewellMessage,
     queueIds,
     color // Añadir color aquí
-  }: WhatsappData & { color?: string }= req.body;
+  }: WhatsappData & { color?: string } = req.body;
 
   const { whatsapp, oldDefaultWhatsapp } = await CreateWhatsAppService({
     name,
@@ -71,9 +71,8 @@ export const show = async (req: Request, res: Response): Promise<Response> => {
   return res.status(200).json(whatsapp);
 };
 
-
 export const update = async (
-  req: Request, 
+  req: Request,
   res: Response
 ): Promise<Response> => {
   const { whatsappId } = req.params;
@@ -84,8 +83,8 @@ export const update = async (
     greetingMessage,
     farewellMessage,
     queueIds,
-    color  // Añadir color aquí
-  }: WhatsappData & { color?: string } = req.body;  // Asegurarse de incluirlo en la interfaz
+    color // Añadir color aquí
+  }: WhatsappData & { color?: string } = req.body; // Asegurarse de incluirlo en la interfaz
 
   const { whatsapp, oldDefaultWhatsapp } = await UpdateWhatsAppService({
     whatsappId,
@@ -96,24 +95,24 @@ export const update = async (
       greetingMessage,
       farewellMessage,
       queueIds,
-      color  // Pasar color al servicio
+      color // Pasar color al servicio
     }
   });
 
-const io = getIO();
-io.emit("whatsapp", {
-  action: "update",
-  whatsapp
-});
-
-if (oldDefaultWhatsapp) {
+  const io = getIO();
   io.emit("whatsapp", {
     action: "update",
-    whatsapp: oldDefaultWhatsapp
+    whatsapp
   });
-}
 
-return res.status(200).json(whatsapp);
+  if (oldDefaultWhatsapp) {
+    io.emit("whatsapp", {
+      action: "update",
+      whatsapp: oldDefaultWhatsapp
+    });
+  }
+
+  return res.status(200).json(whatsapp);
 };
 
 export const remove = async (

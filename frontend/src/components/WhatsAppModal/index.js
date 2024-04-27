@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import * as Yup from "yup";
 import { Formik, Form, Field } from "formik";
 import { toast } from "react-toastify";
+import { SketchPicker } from 'react-color';
 
 import { makeStyles } from "@material-ui/core/styles";
 import { green } from "@material-ui/core/colors";
@@ -14,9 +15,13 @@ import {
 	DialogActions,
 	CircularProgress,
 	TextField,
+	InputAdornment,
+	IconButton,
 	Switch,
 	FormControlLabel,
 } from "@material-ui/core";
+import ColorLensIcon from '@material-ui/icons/ColorLens';
+
 
 import api from "../../services/api";
 import { i18n } from "../../translate/i18n";
@@ -28,7 +33,15 @@ const useStyles = makeStyles(theme => ({
 		display: "flex",
 		flexWrap: "wrap",
 	},
-
+	colorPreview: {
+		width: 20,
+		height: 20,
+		border: '1px solid rgba(0, 0, 0, 0.23)',
+	  },
+	colorPicker: {
+		position: 'absolute',
+		zIndex: 2,
+		},
 	multFieldLine: {
 		display: "flex",
 		"& > *:not(:last-child)": {
@@ -67,6 +80,12 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 	};
 	const [whatsApp, setWhatsApp] = useState(initialState);
 	const [selectedQueueIds, setSelectedQueueIds] = useState([]);
+	// Inside the WhatsAppModal component
+	const [color, setColor] = useState('#fff');  // Default color
+	const [showColorPicker, setShowColorPicker] = useState(false);
+	const handleColorChange = (color) => {
+		setColor(color.hex);
+	  };
 
 	useEffect(() => {
 		const fetchSession = async () => {
@@ -75,6 +94,8 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 			try {
 				const { data } = await api.get(`whatsapp/${whatsAppId}`);
 				setWhatsApp(data);
+
+				setColor(data?.color)
 
 				const whatsQueueIds = data.queues?.map(queue => queue.id);
 				setSelectedQueueIds(whatsQueueIds);
@@ -86,7 +107,7 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 	}, [whatsAppId]);
 
 	const handleSaveWhatsApp = async values => {
-		const whatsappData = { ...values, queueIds: selectedQueueIds };
+		const whatsappData = { ...values, queueIds: selectedQueueIds, color: color };  // Include color
 
 		try {
 			if (whatsAppId) {
@@ -158,6 +179,33 @@ const WhatsAppModal = ({ open, onClose, whatsAppId }) => {
 										label={i18n.t("whatsappModal.form.default")}
 									/>
 								</div>
+								<TextField
+									label="Color"
+									onClick={() => setShowColorPicker(show => !show)}
+									value={color}
+									variant="outlined"
+									margin="dense"
+									className={classes.textField}
+									InputProps={{
+										startAdornment: (
+										  <InputAdornment position="start">
+											<div className={classes.colorPreview} style={{ backgroundColor: color }} />
+										  </InputAdornment>
+										),
+										endAdornment: (
+										  <InputAdornment position="end">
+											<IconButton aria-label="color picker">
+											  <ColorLensIcon />
+											</IconButton>
+										  </InputAdornment>
+										),
+									  }}
+									/>
+									{showColorPicker && (
+									<div style={{ position: 'absolute', zIndex: 2 }}>
+										<SketchPicker color={color} onChangeComplete={handleColorChange} />
+									</div>
+									)}
 								<div>
 									<Field
 										as={TextField}
