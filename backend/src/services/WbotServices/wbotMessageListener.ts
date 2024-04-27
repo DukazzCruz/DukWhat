@@ -107,23 +107,27 @@ const verifyMediaMessage = async (
       "base64"
     );
   } catch (err) {
-    Sentry.captureException(err);
-    logger.error(err);
-  }
+      Sentry.captureException(err);
+      logger.error(err);
+    }
+
+    console.log('mimeType',media.mimetype,'Type',msg.type)
+
+  const mediaType = media.mimetype === "image/webp" && msg.type === "sticker" ? 'sticker' : null;
 
   const messageData = {
     id: msg.id.id,
     ticketId: ticket.id,
     contactId: msg.fromMe ? undefined : contact.id,
-    body: msg.body || media.filename,
+    body: msg.body,
     fromMe: msg.fromMe,
     read: msg.fromMe,
     mediaUrl: media.filename,
-    mediaType: media.mimetype.split("/")[0],
+    mediaType: mediaType || media.mimetype.split("/")[0],
     quotedMsgId: quotedMsg?.id
   };
 
-  await ticket.update({ lastMessage: msg.body || media.filename });
+  await ticket.update({ lastMessage: msg.body || msg.type });
   const newMessage = await CreateMessageService({ messageData });
 
   return newMessage;

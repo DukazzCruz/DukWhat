@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import * as Yup from "yup";
 import { Op } from "sequelize";
 
@@ -14,6 +15,7 @@ interface WhatsappData {
   greetingMessage?: string;
   farewellMessage?: string;
   queueIds?: number[];
+  color?: string; 
 }
 
 interface Request {
@@ -43,7 +45,8 @@ const UpdateWhatsAppService = async ({
     session,
     greetingMessage,
     farewellMessage,
-    queueIds = []
+    queueIds = [],
+    color
   } = whatsappData;
 
   try {
@@ -75,7 +78,8 @@ const UpdateWhatsAppService = async ({
     session,
     greetingMessage,
     farewellMessage,
-    isDefault
+    isDefault,
+    color
   });
 
   await AssociateWhatsappQueue(whatsapp, queueIds);

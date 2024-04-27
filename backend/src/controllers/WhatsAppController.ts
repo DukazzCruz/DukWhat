@@ -31,8 +31,9 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     isDefault,
     greetingMessage,
     farewellMessage,
-    queueIds
-  }: WhatsappData = req.body;
+    queueIds,
+    color // Añadir color aquí
+  }: WhatsappData & { color?: string } = req.body;
 
   const { whatsapp, oldDefaultWhatsapp } = await CreateWhatsAppService({
     name,
@@ -40,7 +41,8 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
     isDefault,
     greetingMessage,
     farewellMessage,
-    queueIds
+    queueIds,
+    color
   });
 
   StartWhatsAppSession(whatsapp);
@@ -74,11 +76,27 @@ export const update = async (
   res: Response
 ): Promise<Response> => {
   const { whatsappId } = req.params;
-  const whatsappData = req.body;
+  const {
+    name,
+    status,
+    isDefault,
+    greetingMessage,
+    farewellMessage,
+    queueIds,
+    color // Añadir color aquí
+  }: WhatsappData & { color?: string } = req.body; // Asegurarse de incluirlo en la interfaz
 
   const { whatsapp, oldDefaultWhatsapp } = await UpdateWhatsAppService({
-    whatsappData,
-    whatsappId
+    whatsappId,
+    whatsappData: {
+      name,
+      status,
+      isDefault,
+      greetingMessage,
+      farewellMessage,
+      queueIds,
+      color // Pasar color al servicio
+    }
   });
 
   const io = getIO();
