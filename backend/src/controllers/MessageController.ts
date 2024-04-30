@@ -71,7 +71,7 @@ export const edit = async (req: Request, res: Response): Promise<Response> => {
   });
 
   return res.send();
-}
+};
 
 export const remove = async (
   req: Request,

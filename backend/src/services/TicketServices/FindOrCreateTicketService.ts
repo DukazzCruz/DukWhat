@@ -3,6 +3,7 @@ import { Op } from "sequelize";
 import Contact from "../../models/Contact";
 import Ticket from "../../models/Ticket";
 import ShowTicketService from "./ShowTicketService";
+import Whatsapp from "../../models/Whatsapp";
 
 const FindOrCreateTicketService = async (
   contact: Contact,
@@ -16,8 +17,14 @@ const FindOrCreateTicketService = async (
         [Op.or]: ["open", "pending"]
       },
       contactId: groupContact ? groupContact.id : contact.id,
-      whatsappId: whatsappId
-    }
+      whatsappId
+    },
+    include: [
+      {
+        model: Whatsapp,
+        attributes: ["color"] // Only fetch the color attribute from the Whatsapp model
+      }
+    ]
   });
 
   if (ticket) {
@@ -28,8 +35,14 @@ const FindOrCreateTicketService = async (
     ticket = await Ticket.findOne({
       where: {
         contactId: groupContact.id,
-        whatsappId: whatsappId
+        whatsappId
       },
+      include: [
+        {
+          model: Whatsapp,
+          attributes: ["color"] // Only fetch the color attribute from the Whatsapp model
+        }
+      ],
       order: [["updatedAt", "DESC"]]
     });
 
@@ -49,8 +62,14 @@ const FindOrCreateTicketService = async (
           [Op.between]: [+subHours(new Date(), 2), +new Date()]
         },
         contactId: contact.id,
-        whatsappId: whatsappId
+        whatsappId
       },
+      include: [
+        {
+          model: Whatsapp,
+          attributes: ["color"] // Only fetch the color attribute from the Whatsapp model
+        }
+      ],
       order: [["updatedAt", "DESC"]]
     });
 
@@ -64,13 +83,23 @@ const FindOrCreateTicketService = async (
   }
 
   if (!ticket) {
-    ticket = await Ticket.create({
-      contactId: groupContact ? groupContact.id : contact.id,
-      status: "pending",
-      isGroup: !!groupContact,
-      unreadMessages,
-      whatsappId
-    });
+    ticket = await Ticket.create(
+      {
+        contactId: groupContact ? groupContact.id : contact.id,
+        status: "pending",
+        isGroup: !!groupContact,
+        unreadMessages,
+        whatsappId
+      },
+      {
+        include: [
+          {
+            model: Whatsapp,
+            attributes: ["color"] // Only fetch the color attribute from the Whatsapp model
+          }
+        ]
+      }
+    );
   }
 
   ticket = await ShowTicketService(ticket.id);
