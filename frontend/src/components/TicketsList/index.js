@@ -147,6 +147,30 @@ const reducer = (state, action) => {
 		return [...state];
 	}
 
+	if (action.type === "UPDATE_LAST_MESSAGE") {
+		const { ticketId: updateTicketId, lastMessage, isLastMessage } = action.payload;
+		
+		// Only proceed if the message is marked as the last message
+		if (!isLastMessage) return state;
+		
+		try {
+			const lastMessageIndex = state.findIndex(t => t.id === updateTicketId);
+			if (lastMessageIndex !== -1) {
+				const updatedTicket = {
+					...state[lastMessageIndex],
+					lastMessage: lastMessage
+				};
+				state[lastMessageIndex] = updatedTicket;
+			}
+		} catch (error) {
+			console.error("Error updating the last message for ticket:", error);
+			// Optionally handle the error more gracefully, potentially returning a modified state with error info
+			return state; // Return the current state if there is an error
+		}
+		
+		return [...state];
+	}
+
 	if (action.type === "RESET") {
 		return [];
 	}
@@ -162,6 +186,8 @@ const reducer = (state, action) => {
 
 	useEffect(() => {
 		dispatch({ type: "RESET" });
+		console.log('TicketList useEffect')
+
 		setPageNumber(1);
 	}, [status, searchParam, dispatch, showAll, selectedQueueIds]);
 
@@ -224,12 +250,29 @@ const reducer = (state, action) => {
 		});
 
 		socket.on("appMessage", data => {
+
+			console.log('TicketList appMessage On Event', data)
 			if (data.action === "create" && shouldUpdateTicket(data.ticket)) {
 				dispatch({
 					type: "UPDATE_TICKET_UNREAD_MESSAGES",
 					payload: data.ticket,
 				});
 			}
+
+			if (data.action === "update" && shouldUpdateTicket(data.ticket)) {
+				// This checks if the incoming message should trigger a ticket update
+				if (data.isLastMessage) {
+					dispatch({
+						type: "UPDATE_LAST_MESSAGE",
+						payload: {
+							ticketId: data.ticket.id,
+							lastMessage: data.lastMessage,
+							isLastMessage: data.isLastMessage
+						}
+					});
+				}
+			}
+
 		});
 
 		socket.on("contact", data => {
