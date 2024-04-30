@@ -35,7 +35,7 @@ class OldMessage extends Model<OldMessage> {
   @Column
   messageId: string;
 
-  @BelongsTo(() => Message)
+  @BelongsTo(() => Message, "messageId")
   message: Message;
 }
 

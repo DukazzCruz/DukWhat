@@ -8,10 +8,12 @@ import {
   PrimaryKey,
   Default,
   BelongsTo,
-  ForeignKey
+  ForeignKey,
+  HasMany
 } from "sequelize-typescript";
 import Contact from "./Contact";
 import Ticket from "./Ticket";
+import OldMessage from "./OldMessage";
 
 @Table
 class Message extends Model<Message> {
@@ -37,7 +39,9 @@ class Message extends Model<Message> {
   @Column(DataType.STRING)
   get mediaUrl(): string | null {
     if (this.getDataValue("mediaUrl")) {
-      return `${process.env.BACKEND_URL}/public/${this.getDataValue("mediaUrl")}`;
+      return `${process.env.BACKEND_URL}/public/${this.getDataValue(
+        "mediaUrl"
+      )}`;
     }
     return null;
   }
@@ -52,7 +56,6 @@ class Message extends Model<Message> {
   @Default(false)
   @Column
   isEdited: boolean;
-
 
   @CreatedAt
   @Column(DataType.DATE(6))
@@ -75,6 +78,9 @@ class Message extends Model<Message> {
 
   @BelongsTo(() => Ticket)
   ticket: Ticket;
+
+  @HasMany(() => OldMessage)
+  oldMessages: OldMessage[];
 
   @ForeignKey(() => Contact)
   @Column
