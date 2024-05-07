@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { join } from "path";
 import { promisify } from "util";
 import { writeFile } from "fs";
@@ -111,7 +113,7 @@ const verifyMediaMessage = async (
     );
   } catch (err) {
     Sentry.captureException(err);
-    logger.error(err);
+    logger.error(err as Error);
   }
 
   console.log("mimeType", media.mimetype, "Type", msg.type);
