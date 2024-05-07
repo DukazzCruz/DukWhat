@@ -2,3 +2,8 @@
 ssl/
 .env
 .wwebjs_auth
+.idea/DukWhat2.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.vscode/settings.json
