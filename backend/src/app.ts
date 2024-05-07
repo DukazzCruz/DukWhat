@@ -10,6 +10,8 @@ import path from "path";
 import ffmpeg from "fluent-ffmpeg";
 
 import "./database";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import sanitizePath from "sanitize-filename";
 import uploadConfig from "./config/upload";
 import AppError from "./errors/AppError";
 import routes from "./routes";
@@ -32,12 +34,15 @@ app.use(Sentry.Handlers.requestHandler());
 // Middleware para verificar y convertir .ogg a .mp3
 // eslint-disable-next-line consistent-return
 app.use("/public", async (req, res, next) => {
-  if (path.extname(req.path) === ".mp3") {
+  // Sanitize the incoming request path to remove any illegal characters or traversal attempts
+  const sanitizedPath = sanitizePath(req.path);
+
+  if (path.extname(sanitizedPath) === ".mp3") {
     const oggFilePath = path.join(
       uploadConfig.directory,
-      req.path.replace(".mp3", ".ogg")
+      sanitizedPath.replace(".mp3", ".ogg")
     );
-    const mp3FilePath = path.join(uploadConfig.directory, req.path);
+    const mp3FilePath = path.join(uploadConfig.directory, sanitizedPath);
 
     try {
       // Check if .mp3 file already exists (is cached)
@@ -70,7 +75,6 @@ app.use("/public", async (req, res, next) => {
     next();
   }
 });
-
 app.use("/public", express.static(uploadConfig.directory));
 app.use(routes);
 
