@@ -45,18 +45,20 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
       const args: string = process.env.CHROME_ARGS || "";
 
+      const wwebVersion = process.env.CACHED_WAWEB_VERSION_TO_USE;
       const wbot: Session = new Client({
         session: sessionCfg,
         authStrategy: new LocalAuth({ clientId: `bd_${whatsapp.id}` }),
-        webVersionCache: {
-          type: "remote",
-          remotePath:
-            "https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2410.1.html"
-        },
         puppeteer: {
           executablePath: process.env.CHROME_BIN || undefined,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           browserWSEndpoint: process.env.CHROME_WS || undefined,
           args: args.split(" ")
+        },
+        webVersionCache: {
+          type: "remote",
+          remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
         }
       });
 
@@ -77,6 +79,10 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
           action: "update",
           session: whatsapp
         });
+      });
+
+      wbot.on("change_state", state => {
+        logger.info(`Session: ${sessionName} STATE: ${state}`);
       });
 
       wbot.on("authenticated", async _session => {
@@ -132,7 +138,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         resolve(wbot);
       });
     } catch (err) {
-      logger.error(err);
+      logger.error(err as Error);
     }
   });
 };
@@ -154,6 +160,6 @@ export const removeWbot = (whatsappId: number): void => {
       sessions.splice(sessionIndex, 1);
     }
   } catch (err) {
-    logger.error(err);
+    logger.error(err as Error);
   }
 };

@@ -1,0 +1,13 @@
+diff --git a/node_modules/whatsapp-web.js/src/Client.js b/node_modules/whatsapp-web.js/src/Client.js
+index 0e3271a..2f40501 100644
+--- a/node_modules/whatsapp-web.js/src/Client.js
++++ b/node_modules/whatsapp-web.js/src/Client.js
+@@ -1209,7 +1209,7 @@ class Client extends EventEmitter {
+         const profilePic = await this.pupPage.evaluate(async contactId => {
+             try {
+                 const chatWid = window.Store.WidFactory.createWid(contactId);
+-                return await window.Store.ProfilePic.profilePicFind(chatWid);
++                return await (window.Store.ProfilePic.profilePicFind|| window.Store.ProfilePic.requestProfilePicFromServer)(chatWid);
+             } catch (err) {
+                 if(err.name === 'ServerStatusCodeError') return undefined;
+                 throw err;
