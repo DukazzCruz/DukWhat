@@ -14,6 +14,7 @@ services:
       - BACKEND_URL=${BACKEND_URL:-http://localhost}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
       - PROXY_PORT=${PROXY_PORT:-8080}
+      - CHROME_WS=${CHROME_WS}
       - TZ
       - CHROME_ARGS=--no-sandbox --disable-setuid-sandbox
     ports:
@@ -23,6 +24,8 @@ services:
       - whaticket2:/usr/src/app/.wwebjs_auth/
     networks:
       - whaticket
+    depends_on:
+      - mysql      
   frontend:
     ports:
       - ${FRONTEND_PORT:-3000}:80

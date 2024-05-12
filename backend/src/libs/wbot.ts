@@ -1,5 +1,5 @@
 import qrCode from "qrcode-terminal";
-import { Client, LocalAuth } from "whatsapp-web.js";
+import { Client } from "whatsapp-web.js";
 import { getIO } from "./socket";
 import Whatsapp from "../models/Whatsapp";
 import AppError from "../errors/AppError";
@@ -43,18 +43,35 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         sessionCfg = JSON.parse(whatsapp.session);
       }
 
-      const args: string = process.env.CHROME_ARGS || "";
+      logger.info({
+        msg: "Conecting whatsapp",
+        whatsappName: whatsapp.name,
+        CHROME_WS: process.env.CHROME_WS
+      });
+
+      // const args: string = process.env.CHROME_ARGS || "";
 
       const wwebVersion = process.env.CACHED_WAWEB_VERSION_TO_USE;
+      const userDataDir = `/whatsappSessions/session-bd_${whatsapp.id}`;
+      const lauchOptions = process.env.CHROME_WS
+        ? `--user-data-dir=${userDataDir}`
+        : undefined;
+
       const wbot: Session = new Client({
         session: sessionCfg,
-        authStrategy: new LocalAuth({ clientId: `bd_${whatsapp.id}` }),
         puppeteer: {
-          executablePath: process.env.CHROME_BIN || undefined,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          browserWSEndpoint: process.env.CHROME_WS || undefined,
-          args: args.split(" ")
+          browserWSEndpoint:
+            `${process.env.CHROME_WS}?${lauchOptions}` || undefined,
+          args: [
+            "--no-sandbox",
+            "--disable-setuid-sandbox",
+            "--disable-gpu-driver-bug-workarounds",
+            "--disable-accelerated-2d-canvas",
+            "--disable-background-timer-throttling",
+            "--disable-backgrounding-occluded-windows"
+          ],
+          headless: true,
+          userDataDir: process.env.CHROME_WS ? userDataDir : undefined
         },
         webVersionCache: {
           type: "remote",
@@ -137,8 +154,14 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
         resolve(wbot);
       });
-    } catch (err) {
-      logger.error(err as Error);
+
+      wbot.on("disconnected", reason => {
+        logger.info(`WhatsApp session disconnected: ${reason}`);
+        whatsapp.update({ status: "DISCONNECTED" }).catch(logger.error);
+      });
+    } catch (error) {
+      logger.error(`Error initializing WhatsApp bot: ${error}`);
+      reject(error);
     }
   });
 };
