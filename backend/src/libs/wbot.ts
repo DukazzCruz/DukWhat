@@ -43,25 +43,26 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         sessionCfg = JSON.parse(whatsapp.session);
       }
 
-      logger.info({
-        msg: "Conecting whatsapp",
-        whatsappName: whatsapp.name,
-        CHROME_WS: process.env.CHROME_WS
-      });
-
       // const args: string = process.env.CHROME_ARGS || "";
 
       const wwebVersion = process.env.CACHED_WAWEB_VERSION_TO_USE;
       const userDataDir = `/whatsappSessions/session-bd_${whatsapp.id}`;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const lauchOptions = process.env.CHROME_WS
         ? `--user-data-dir=${userDataDir}`
         : undefined;
 
+      logger.info({
+        msg: "Conecting whatsapp",
+        whatsappName: whatsapp.name,
+        CHROME_WS: process.env.CHROME_WS,
+        userDataDir: process.env.CHROME_WS ? userDataDir : undefined
+      });
+
       const wbot: Session = new Client({
         session: sessionCfg,
         puppeteer: {
-          browserWSEndpoint:
-            `${process.env.CHROME_WS}?${lauchOptions}` || undefined,
+          browserWSEndpoint: `${process.env.CHROME_WS}` || undefined,
           args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",

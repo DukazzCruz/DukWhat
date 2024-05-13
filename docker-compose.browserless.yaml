@@ -1,29 +1,29 @@
-browser:
-    user: "1000:1000"  # UID:GID del usuario con acceso adecuado al directorio
+services:
+  browser:
     image: browserless/chrome:1.60.2-puppeteer-16.2.0
     hostname: browser
     environment:
       CONNECTION_TIMEOUT: "-1"
       KEEP_ALIVE: "true"
-      BROWSERLESS_PORT: ${BROWSERLESS_PORT:4000}
-      ENABLE_CORS: "false"
+      BROWSERLESS_PORT: ${BROWSERLESS_PORT:-4000}
+      ENABLE_CORS: "true"
       DEFAULT_BLOCK_ADS: "true"
       ENABLE_XVBF: "true"
       CHROME_PATH: "/usr/bin/google-chrome"
       USE_CHROME_STABLE: "true"
       NODE_ENV: "production"
-      MAX_CONCURRENT_SESSIONS: "-1"
+      MAX_CONCURRENT_SESSIONS: "60000"
       DEFAULT_IGNORE_DEFAULT_ARGS: true
-      WORKSPACE_DIR: '/whatsappSessions/whaticket'
+      WORKSPACE_DIR: '/whatsappSessions'
       ENABLE_DEBUGGER: true
-      # BROWSERLESS_DIR: '/data/whatsappSessions:-./whatsappSessions'
     ports:
-      - "4000:3000"  # Maps port 3000 inside the container to port 4000 on the host
+      - "${BROWSERLESS_PORT}:3000"  # Maps port 3000 inside the container to port 4000 on the host
     volumes:
-      - /data/whatsappSessions/whaticket/:/whatsappSessions
+    - "/data/whatsappSessions:/whatsappSessions"
     networks:
       - whaticket
       - whaticket1
+
 networks:
   whaticket:
     name: WhatsappTickets22
