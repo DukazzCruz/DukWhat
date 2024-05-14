@@ -123,11 +123,13 @@ const verifyMediaMessage = async (
       ? "sticker"
       : null;
 
+  const isImageMedia = ["image", "video", "sticker"].includes(msg.type);
+
   const messageData = {
     id: msg.id.id,
     ticketId: ticket.id,
     contactId: msg.fromMe ? undefined : contact.id,
-    body: msg.body,
+    body: msg.body || !isImageMedia ? media.filename : "\n",
     fromMe: msg.fromMe,
     read: msg.fromMe,
     mediaUrl: media.filename,
