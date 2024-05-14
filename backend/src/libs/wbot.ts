@@ -208,3 +208,16 @@ export const restartWbot = async (whatsappId: number): Promise<Session> => {
   }
   throw new AppError("WhatsApp session not initialized.");
 };
+
+// Nueva función para apagar el cliente
+export const shutdownWbot = async (whatsappId: string): Promise<void> => {
+  const whatsappIDNumber: number = parseInt(whatsappId, 10);
+
+  const sessionIndex = sessions.findIndex(s => s.id === whatsappIDNumber);
+  if (sessionIndex !== -1) {
+    await sessions[sessionIndex].destroy();
+    sessions.splice(sessionIndex, 1); // Elimina la sesión del array
+  } else {
+    throw new AppError("WhatsApp session not initialized.");
+  }
+};

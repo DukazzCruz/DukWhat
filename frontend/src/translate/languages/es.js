@@ -57,6 +57,9 @@ const messages = {
         toasts: {
           deleted:
             "¡La conexión de WhatsApp ha sido borrada satisfactoriamente!",
+            sessionStarted: "Sesión de WhatsApp iniciada con éxito.",
+            sessionShutdown: "Sesión de WhatsApp apagada con éxito.",
+            sessionRestarted: "Sesión de WhatsApp reiniciada con éxito."
         },
         confirmationModal: {
           deleteTitle: "Borrar",
@@ -71,6 +74,8 @@ const messages = {
           qrcode: "QR CODE",
           newQr: "Nuevo QR CODE",
           connecting: "Conectando",
+          start: "Iniciar",
+          shutdown: "Apagar",
           restart: "Reiniciar"
         },
         toolTips: {

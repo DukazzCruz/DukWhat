@@ -55,6 +55,9 @@ const messages = {
         title: "Connections",
         toasts: {
           deleted: "WhatsApp connection deleted sucessfully!",
+          sessionStarted: "WhatsApp session started successfully.",
+          sessionShutdown: "WhatsApp session shutdown successfully.",
+          sessionRestarted: "WhatsApp session restarted successfully."
         },
         confirmationModal: {
           deleteTitle: "Delete",
@@ -69,7 +72,9 @@ const messages = {
           qrcode: "QR CODE",
           newQr: "New QR CODE",
           connecting: "Connectiing",
-          restart: "Restart"
+          restart: "Restart",
+          start: "Start",
+          shutdown: "Shutdown"
         },
         toolTips: {
           disconnected: {
