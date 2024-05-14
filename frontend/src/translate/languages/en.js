@@ -69,7 +69,7 @@ const messages = {
           qrcode: "QR CODE",
           newQr: "New QR CODE",
           connecting: "Connectiing",
-          restart: "Restart Session"
+          restart: "Restart"
         },
         toolTips: {
           disconnected: {

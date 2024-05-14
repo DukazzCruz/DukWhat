@@ -1,29 +1,68 @@
+diff --git a/node_modules/whatsapp-web.js/index.d.ts b/node_modules/whatsapp-web.js/index.d.ts
+index 95eaf9c..a83680f 100644
+--- a/node_modules/whatsapp-web.js/index.d.ts
++++ b/node_modules/whatsapp-web.js/index.d.ts
+@@ -436,6 +436,8 @@ declare namespace WAWebJS {
+         authStrategy?: AuthStrategy,
+         /** The version of WhatsApp Web to use. Use options.webVersionCache to configure how the version is retrieved. */
+         webVersion?: string,
++
++        sessionName?: string,
+         /**  Determines how to retrieve the WhatsApp Web version specified in options.webVersion. */
+         webVersionCache?: WebCacheOptions,
+         /** How many times should the qrcode be refreshed before giving up
 diff --git a/node_modules/whatsapp-web.js/src/Client.js b/node_modules/whatsapp-web.js/src/Client.js
-index 0e3271a..f18bec6 100644
+index 0e3271a..de84f55 100644
 --- a/node_modules/whatsapp-web.js/src/Client.js
 +++ b/node_modules/whatsapp-web.js/src/Client.js
 @@ -287,6 +287,8 @@ class Client extends EventEmitter {
          await this.authStrategy.beforeBrowserInitialized();
  
          const puppeteerOpts = this.options.puppeteer;
-+        const sessionName = this.options.session || "default-session";
++        const sessionName = this.options.sessionName || "default-session";
 +
          if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
              browser = await puppeteer.connect(puppeteerOpts);
              page = await browser.newPage();
-@@ -302,6 +304,11 @@ class Client extends EventEmitter {
-             page = (await browser.pages())[0];
-         }
- 
-+        // Cambia el título de la pestaña
-+        await page.evaluate((sessionName) => {
-+            document.title = `WhatsApp - ${sessionName}`;
-+        }, sessionName);
+@@ -328,6 +330,29 @@ class Client extends EventEmitter {
+             };
+         });
+         
 +
-         if (this.options.proxyAuthentication !== undefined) {
-             await page.authenticate(this.options.proxyAuthentication);
-         }
-@@ -1209,7 +1216,7 @@ class Client extends EventEmitter {
++        await page.evaluateOnNewDocument((sessionName) => {
++            localStorage.setItem('sessionName', sessionName);
++        
++            const updateTitle = () => {
++                const sessionName = localStorage.getItem('sessionName');
++                if (sessionName && !document.title.includes(sessionName)) {
++                    document.title = `WhatsApp - ${sessionName}`;
++                }
++            };
++        
++            // Observa cambios en el título del documento
++            const observer = new MutationObserver(updateTitle);
++            const titleElement = document.querySelector('title');
++            if (titleElement) {
++                observer.observe(titleElement, { childList: true });
++            }      
++            // Actualiza el título inicialmente y luego periódicamente
++            updateTitle();
++            setInterval(updateTitle, 1000);
++        }, sessionName);
++        
++
+         await page.goto(WhatsWebURL, {
+             waitUntil: 'load',
+             timeout: 0,
+@@ -336,6 +361,7 @@ class Client extends EventEmitter {
+ 
+         await this.inject();
+ 
++
+         this.pupPage.on('framenavigated', async (frame) => {
+             if(frame.url().includes('post_logout=1') || this.lastLoggedOut) {
+                 this.emit(Events.DISCONNECTED, 'LOGOUT');
+@@ -1209,7 +1235,7 @@ class Client extends EventEmitter {
          const profilePic = await this.pupPage.evaluate(async contactId => {
              try {
                  const chatWid = window.Store.WidFactory.createWid(contactId);
