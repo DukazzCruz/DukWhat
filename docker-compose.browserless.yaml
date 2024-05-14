@@ -13,16 +13,21 @@ services:
       USE_CHROME_STABLE: "true"
       NODE_ENV: "production"
       MAX_CONCURRENT_SESSIONS: "60000"
-      DEFAULT_IGNORE_DEFAULT_ARGS: true
+      # DEFAULT_IGNORE_DEFAULT_ARGS: true
       WORKSPACE_DIR: '/whatsappSessions'
       ENABLE_DEBUGGER: true
     ports:
       - "${BROWSERLESS_PORT}:3000"  # Maps port 3000 inside the container to port 4000 on the host
     volumes:
-    - "/data/whatsappSessions:/whatsappSessions"
+      - "/data/whatsappSessions:/whatsappSessions"
     networks:
       - whaticket
       - whaticket1
+    user: "0:0"  # Ejecuta el contenedor como root para tener todos los permisos
+    cap_add:
+      - ALL  # Agrega todas las capacidades al contenedor
+    security_opt:
+      - apparmor:unconfined  # Desactiva AppArmor para este contenedor
 
 networks:
   whaticket:

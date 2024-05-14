@@ -1,3 +1,4 @@
+// src/libs/wbot.ts
 import qrCode from "qrcode-terminal";
 import { Client } from "whatsapp-web.js";
 import { getIO } from "./socket";
@@ -49,7 +50,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
       const userDataDir = `/whatsappSessions/session-bd_${whatsapp.id}`;
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const lauchOptions = process.env.CHROME_WS
-        ? `--user-data-dir=${userDataDir}`
+        ? `?--user-data-dir=${userDataDir}`
         : undefined;
 
       logger.info({
@@ -62,14 +63,16 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
       const wbot: Session = new Client({
         session: sessionCfg,
         puppeteer: {
-          browserWSEndpoint: `${process.env.CHROME_WS}` || undefined,
+          browserWSEndpoint:
+            `${process.env.CHROME_WS}${lauchOptions}` || undefined,
           args: [
             "--no-sandbox",
             "--disable-setuid-sandbox",
             "--disable-gpu-driver-bug-workarounds",
             "--disable-accelerated-2d-canvas",
             "--disable-background-timer-throttling",
-            "--disable-backgrounding-occluded-windows"
+            "--disable-backgrounding-occluded-windows",
+            `--user-data-dir=${userDataDir}` // Specify the dynamic user data directory here
           ],
           headless: true,
           userDataDir: process.env.CHROME_WS ? userDataDir : undefined
@@ -186,4 +189,20 @@ export const removeWbot = (whatsappId: number): void => {
   } catch (err) {
     logger.error(err as Error);
   }
+};
+
+export const restartWbot = async (whatsappId: number): Promise<Session> => {
+  const sessionIndex = sessions.findIndex(s => s.id === whatsappId);
+  if (sessionIndex !== -1) {
+    const whatsapp = await Whatsapp.findByPk(whatsappId);
+    if (!whatsapp) {
+      throw new AppError("WhatsApp not found.");
+    }
+    sessions[sessionIndex].destroy(); // Destruye la sesión existente
+    sessions.splice(sessionIndex, 1); // Elimina la sesión del array
+
+    const newSession = await initWbot(whatsapp); // Inicializa una nueva sesión
+    return newSession;
+  }
+  throw new AppError("WhatsApp session not initialized.");
 };
