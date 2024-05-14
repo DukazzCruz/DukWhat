@@ -1,7 +1,7 @@
 // src/controllers/WhatsAppController.ts
 import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
-import { removeWbot } from "../libs/wbot";
+import { initWbot, removeWbot, shutdownWbot } from "../libs/wbot";
 import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
 
 import CreateWhatsAppService from "../services/WhatsappService/CreateWhatsAppService";
@@ -10,6 +10,7 @@ import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsServi
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import RestartWhatsAppService from "../services/WhatsappService/RestartWhatsAppService";
+import Whatsapp from "../models/Whatsapp";
 
 interface WhatsappData {
   name: string;
@@ -154,6 +155,54 @@ export const restart = async (
   } catch (error) {
     return res.status(500).json({
       message: "Failed to restart WhatsApp session.",
+      error: (error as Error).message
+    });
+  }
+};
+
+// Nueva función para apagar el cliente
+export const shutdown = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { whatsappId } = req.params;
+
+  try {
+    await shutdownWbot(whatsappId);
+    const io = getIO();
+    io.emit("whatsapp", {
+      action: "update",
+      whatsappId
+    });
+    return res
+      .status(200)
+      .json({ message: "WhatsApp session shutdown successfully." });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to shutdown WhatsApp session.",
+      error: (error as Error).message
+    });
+  }
+};
+
+export const start = async (req: Request, res: Response): Promise<Response> => {
+  const { whatsappId } = req.params;
+  const whatsapp = await Whatsapp.findByPk(whatsappId);
+  if (!whatsapp) throw Error("no se encontro el whatsapp");
+
+  try {
+    await initWbot(whatsapp); // Inicializa una nueva sesión
+    const io = getIO();
+    io.emit("whatsapp", {
+      action: "update",
+      whatsappId
+    });
+    return res
+      .status(200)
+      .json({ message: "WhatsApp session started successfully." });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to start WhatsApp session.",
       error: (error as Error).message
     });
   }

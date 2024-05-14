@@ -141,6 +141,26 @@
 			}
 		  };
 
+		  const handleStartSession = async (whatsAppId) => {
+			try {
+				await api.post(`/whatsapp/${whatsAppId}/start`);
+				toast.success(i18n.t("connections.toasts.sessionStarted"));
+			} catch (err) {
+			  toastError(err);
+			}
+		  };
+
+		  const handleShutdownSession = async (whatsAppId) => {
+			try {
+			  await api.post(`/whatsapp/${whatsAppId}/shutdown`);
+			  toast.success(i18n.t("connections.toasts.sessionShutdown"));
+			} catch (err) {
+			  toastError(err);
+			}
+		  };
+
+
+
 		const handleRequestNewQrCode = async whatsAppId => {
 			try {
 				await api.put(`/whatsappsession/${whatsAppId}`);
@@ -218,7 +238,26 @@
 
 		const renderActionButtons = whatsApp => {
 			return (
-				<>
+				<>	{whatsApp.status === "DISCONNECTED" && (
+					<Button
+					  size="small"
+					  variant="outlined"
+					  color="primary"
+					  onClick={() => handleStartSession(whatsApp.id)}
+					>
+					  {i18n.t("connections.buttons.start")}
+					</Button>
+				  )}
+				  {whatsApp.status === "qrcode" && (
+					<Button
+						size="small"
+						variant="outlined"
+						color="secondary"
+						onClick={() => handleShutdownSession(whatsApp.id)}
+					>
+						{i18n.t("connections.buttons.shutdown")}
+					</Button>
+					)}
 					{whatsApp.status === "qrcode" && (
 						<Button
 							size="small"
