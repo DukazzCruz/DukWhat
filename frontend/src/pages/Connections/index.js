@@ -268,7 +268,7 @@
 							{i18n.t("connections.buttons.connecting")}
 						</Button>
 					)}
-					 {whatsApp.status === "CONNECTED" && (
+					 {whatsApp.status && (
 							<Button
 							size="small"
 							variant="outlined"
