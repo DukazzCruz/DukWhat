@@ -1,8 +1,29 @@
 diff --git a/node_modules/whatsapp-web.js/src/Client.js b/node_modules/whatsapp-web.js/src/Client.js
-index 0e3271a..2f40501 100644
+index 0e3271a..f18bec6 100644
 --- a/node_modules/whatsapp-web.js/src/Client.js
 +++ b/node_modules/whatsapp-web.js/src/Client.js
-@@ -1209,7 +1209,7 @@ class Client extends EventEmitter {
+@@ -287,6 +287,8 @@ class Client extends EventEmitter {
+         await this.authStrategy.beforeBrowserInitialized();
+ 
+         const puppeteerOpts = this.options.puppeteer;
++        const sessionName = this.options.session || "default-session";
++
+         if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
+             browser = await puppeteer.connect(puppeteerOpts);
+             page = await browser.newPage();
+@@ -302,6 +304,11 @@ class Client extends EventEmitter {
+             page = (await browser.pages())[0];
+         }
+ 
++        // Cambia el título de la pestaña
++        await page.evaluate((sessionName) => {
++            document.title = `WhatsApp - ${sessionName}`;
++        }, sessionName);
++
+         if (this.options.proxyAuthentication !== undefined) {
+             await page.authenticate(this.options.proxyAuthentication);
+         }
+@@ -1209,7 +1216,7 @@ class Client extends EventEmitter {
          const profilePic = await this.pupPage.evaluate(async contactId => {
              try {
                  const chatWid = window.Store.WidFactory.createWid(contactId);

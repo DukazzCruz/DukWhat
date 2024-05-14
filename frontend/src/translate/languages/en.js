@@ -69,6 +69,7 @@ const messages = {
           qrcode: "QR CODE",
           newQr: "New QR CODE",
           connecting: "Connectiing",
+          restart: "Restart Session"
         },
         toolTips: {
           disconnected: {
@@ -112,6 +113,7 @@ const messages = {
           okAdd: "Add",
           okEdit: "Save",
           cancel: "Cancel",
+
         },
         success: "WhatsApp saved successfully.",
       },

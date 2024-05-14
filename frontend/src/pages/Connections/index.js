@@ -1,3 +1,5 @@
+	
+	// src/pages/Connections/index.js
 	import React, { useState, useCallback, useContext } from "react";
 	import { toast } from "react-toastify";
 	import { format, parseISO } from "date-fns";
@@ -130,6 +132,15 @@
 			}
 		};
 
+		const handleRestartSession = async (whatsAppId) => {
+			try {
+			  const response = await api.post(`/whatsapp/${whatsAppId}/restart`);
+			  toast.success(i18n.t("connections.toasts.sessionRestarted"));
+			} catch (err) {
+			  toastError(err);
+			}
+		  };
+
 		const handleRequestNewQrCode = async whatsAppId => {
 			try {
 				await api.put(`/whatsappsession/${whatsAppId}`);
@@ -255,6 +266,16 @@
 					{whatsApp.status === "OPENING" && (
 						<Button size="small" variant="outlined" disabled color="default">
 							{i18n.t("connections.buttons.connecting")}
+						</Button>
+					)}
+					 {whatsApp.status === "CONNECTED" && (
+							<Button
+							size="small"
+							variant="outlined"
+							color="primary"
+							onClick={() => handleRestartSession(whatsApp.id)}
+							>
+							{i18n.t("connections.buttons.restart")}
 						</Button>
 					)}
 				</>

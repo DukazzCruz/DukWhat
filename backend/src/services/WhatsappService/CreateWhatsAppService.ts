@@ -1,3 +1,4 @@
+// src/services/WhatsappService/CreateWhatsAppService.ts
 import * as Yup from "yup";
 
 import AppError from "../../errors/AppError";
@@ -11,7 +12,7 @@ interface Request {
   farewellMessage?: string;
   status?: string;
   isDefault?: boolean;
-  color?: string; 
+  color?: string;
 }
 
 interface Response {
@@ -44,13 +45,15 @@ const CreateWhatsAppService = async ({
         }
       ),
     isDefault: Yup.boolean().required(),
-    color: Yup.string().matches(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid color format").nullable() // Valida formato de color hexadecimal
+    color: Yup.string()
+      .matches(/^#(?:[0-9a-fA-F]{3}){1,2}$/, "Invalid color format")
+      .nullable() // Valida formato de color hexadecimal
   });
 
   try {
     await schema.validate({ name, status, isDefault, color });
   } catch (err) {
-    throw new AppError(err.message);
+    throw new AppError((err as Error).message);
   }
 
   const whatsappFound = await Whatsapp.findOne();

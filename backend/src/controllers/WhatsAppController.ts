@@ -1,3 +1,4 @@
+// src/controllers/WhatsAppController.ts
 import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
 import { removeWbot } from "../libs/wbot";
@@ -8,6 +9,7 @@ import DeleteWhatsAppService from "../services/WhatsappService/DeleteWhatsAppSer
 import ListWhatsAppsService from "../services/WhatsappService/ListWhatsAppsService";
 import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService";
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
+import RestartWhatsAppService from "../services/WhatsappService/RestartWhatsAppService";
 
 interface WhatsappData {
   name: string;
@@ -131,4 +133,28 @@ export const remove = async (
   });
 
   return res.status(200).json({ message: "Whatsapp deleted." });
+};
+
+export const restart = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { whatsappId } = req.params;
+
+  try {
+    await RestartWhatsAppService(whatsappId);
+    const io = getIO();
+    io.emit("whatsapp", {
+      action: "update",
+      whatsappId
+    });
+    return res
+      .status(200)
+      .json({ message: "WhatsApp session restarted successfully." });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to restart WhatsApp session.",
+      error: (error as Error).message
+    });
+  }
 };
