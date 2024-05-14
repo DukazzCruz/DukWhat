@@ -243,7 +243,7 @@
 					  size="small"
 					  variant="outlined"
 					  color="primary"
-					  onClick={() => handleStartSession(whatsApp.id)}
+					  onClick={() => handleStartSession(whatsApp?.id)}
 					>
 					  {i18n.t("connections.buttons.start")}
 					</Button>
@@ -253,7 +253,7 @@
 						size="small"
 						variant="outlined"
 						color="secondary"
-						onClick={() => handleShutdownSession(whatsApp.id)}
+						onClick={() => handleShutdownSession(whatsApp?.id)}
 					>
 						{i18n.t("connections.buttons.shutdown")}
 					</Button>
@@ -312,7 +312,7 @@
 							size="small"
 							variant="outlined"
 							color="primary"
-							onClick={() => handleRestartSession(whatsApp.id)}
+							onClick={() => handleRestartSession(whatsApp?.id)}
 							>
 							{i18n.t("connections.buttons.restart")}
 						</Button>
