@@ -12,6 +12,7 @@ services:
       - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET:-75756756756}
       - BACKEND_URL=${BACKEND_URL:-http://localhost}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
+      - CACHED_WAWEB_VERSION_TO_USE=${CACHED_WAWEB_VERSION_TO_USE}
       - PROXY_PORT=${PROXY_PORT:-8080}
       - CHROME_WS=${CHROME_WS}
       - TZ
@@ -25,7 +26,7 @@ services:
       - whaticket
     depends_on:
       - mysql      
-  frontend:
+  frontend:  
     ports:
       - ${FRONTEND_PORT:-3000}:80
       - ${FRONTEND_SSL_PORT:-3001}:443

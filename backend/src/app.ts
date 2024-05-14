@@ -86,6 +86,7 @@ app.use(async (err: Error, req: Request, res: Response, _: NextFunction) => {
     return res.status(err.statusCode).json({ error: err.message });
   }
 
+  console.error({ err });
   logger.error(err);
   return res.status(500).json({ error: "Internal server error" });
 });

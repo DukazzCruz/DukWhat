@@ -42,7 +42,9 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     flexGrow: 1,
   },
-
+  mediaMessage:{
+    paddingTop: '5% !important'
+  },
   messagesList: {
     backgroundImage: `url(${whatsBackground})`,
     display: "flex",
@@ -485,6 +487,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
     else if ( /^.*\.(jpe?g|png|gif)?$/i.exec(message.mediaUrl) && message.mediaType === "image") {
       return <ModalImageCors imageUrl={message.mediaUrl} />;
     } else if (message.mediaType === "audio") {
+      message.body = ""
       return <Audio url={message.mediaUrl} />
     } else if (message.mediaType === "video") {
       return (
@@ -635,7 +638,9 @@ const MessagesList = ({ ticketId, isGroup }) => {
               ) && checkMessageMedia(message)}
               <div
                 className={clsx(classes.textContentItem, {
-                  [classes.textContentItemEdited] : message.isEdited
+                  [classes.textContentItemEdited] : message.isEdited,
+                  [classes.mediaMessage]: message.mediaUrl && !message.body ?  true : false
+                  
                 })}
               >
                 {message.quotedMsg && renderQuotedMessage(message)}
@@ -670,8 +675,10 @@ const MessagesList = ({ ticketId, isGroup }) => {
               <div
                 className={clsx(classes.textContentItem, {
                   [classes.textContentItemDeleted]: message.isDeleted,
-                  [classes.textContentItemEdited] : message.isEdited
+                  [classes.textContentItemEdited] : message.isEdited,
+                  [classes.mediaMessage]: message.mediaUrl && !message.body ?  true : false
                 })}
+                
               >
                 {message.isDeleted && (
                   <Block

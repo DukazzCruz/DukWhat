@@ -10,6 +10,7 @@ import DeleteWhatsAppMessage from "../services/WbotServices/DeleteWhatsAppMessag
 import SendWhatsAppMedia from "../services/WbotServices/SendWhatsAppMedia";
 import SendWhatsAppMessage from "../services/WbotServices/SendWhatsAppMessage";
 import EditWhatsAppMessage from "../services/WbotServices/EditWhatsAppMessage";
+import { logger } from "../utils/logger";
 
 type IndexQuery = {
   pageNumber: string;
@@ -41,21 +42,41 @@ export const store = async (req: Request, res: Response): Promise<Response> => {
   const { body, quotedMsg }: MessageData = req.body;
   const medias = req.files as Express.Multer.File[];
 
-  const ticket = await ShowTicketService(ticketId);
+  try {
+    logger.info(`Received request to store message for ticket ${ticketId}`);
+    // logger.info({ body, quotedMsg, medias });
 
-  SetTicketMessagesAsRead(ticket);
+    const ticket = await ShowTicketService(ticketId);
+    SetTicketMessagesAsRead(ticket);
 
-  if (medias) {
-    await Promise.all(
-      medias.map(async (media: Express.Multer.File) => {
-        await SendWhatsAppMedia({ media, ticket });
-      })
-    );
-  } else {
-    await SendWhatsAppMessage({ body, ticket, quotedMsg });
+    if (medias && medias.length > 0) {
+      logger.info(`Processing ${medias.length} media files`);
+
+      await Promise.all(
+        medias.map(async (media: Express.Multer.File) => {
+          try {
+            logger.info(`Sending media file ${media.originalname}`);
+            await SendWhatsAppMedia({ media, ticket });
+            logger.info(`Sent media file ${media.originalname}`);
+          } catch (mediaError) {
+            logger.error(
+              `Error sending media file ${media.originalname}`,
+              mediaError
+            );
+            throw mediaError; // Re-lanzar el error para ser capturado por el bloque externo
+          }
+        })
+      );
+    } else {
+      logger.info("No media files to process, sending text message");
+      await SendWhatsAppMessage({ body, ticket, quotedMsg });
+    }
+
+    return res.status(204).send();
+  } catch (error) {
+    logger.error("Error storing message", error);
+    return res.status(500).send("Failed to store message");
   }
-
-  return res.send();
 };
 
 export const edit = async (req: Request, res: Response): Promise<Response> => {

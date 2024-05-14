@@ -371,7 +371,11 @@ const MessageInput = ({ ticketStatus }) => {
       formData.append("body", filename);
       formData.append("fromMe", true);
 
-      await api.post(`/messages/${ticketId}`, formData);
+      await api.post(`/messages/${ticketId}`, formData,{
+        headers: {
+          "Content-Type": "multipart/form-data"
+        }
+      });
     } catch (err) {
       toastError(err);
     }
