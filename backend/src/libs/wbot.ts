@@ -77,6 +77,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
           headless: true,
           userDataDir: process.env.CHROME_WS ? userDataDir : undefined
         },
+        sessionName,
         webVersionCache: {
           type: "remote",
           remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
