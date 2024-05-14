@@ -57,7 +57,8 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         msg: "Conecting whatsapp",
         whatsappName: whatsapp.name,
         CHROME_WS: process.env.CHROME_WS,
-        userDataDir: process.env.CHROME_WS ? userDataDir : undefined
+        userDataDir: process.env.CHROME_WS ? userDataDir : undefined,
+        wwebVersion
       });
 
       const wbot: Session = new Client({
