@@ -9,6 +9,13 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types" // Si tienes una carpeta custom de tipos
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
 }
