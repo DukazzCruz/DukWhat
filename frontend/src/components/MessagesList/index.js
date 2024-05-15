@@ -691,7 +691,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
                 <MarkdownWrapper>{message.body}</MarkdownWrapper>
                 <span className={classes.timestamp}>
                   {message.isEdited && <span>{i18n.t("message.edited")} </span>}
-                  {format(parseISO(message.createdAt), "HH:mm")}
+                  {format(parseISO(message.createdAt), "aaa")}
                   {renderMessageAck(message)}
                 </span>
               </div>
