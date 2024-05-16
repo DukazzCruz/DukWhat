@@ -38,6 +38,7 @@ services:
       - REACT_APP_BACKEND_URL=${BACKEND_URL:-http://localhost}/
       - FRONTEND_SERVER_NAME=${FRONTEND_SERVER_NAME}
       - BACKEND_SERVER_NAME=${BACKEND_SERVER_NAME}
+      - REACT_APP_HOURS_CLOSE_TICKETS_AUTO=${REACT_APP_HOURS_CLOSE_TICKETS_AUTO}
     volumes:
       - ./ssl/certs/:/etc/nginx/ssl/
       - ./ssl/www/:/var/www/letsencrypt/
