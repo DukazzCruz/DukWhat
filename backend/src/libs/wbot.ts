@@ -58,12 +58,13 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         whatsappName: whatsapp.name,
         CHROME_WS: process.env.CHROME_WS,
         userDataDir: process.env.CHROME_WS ? userDataDir : undefined,
-        wwebVersion
+        wwebVersion,
+        webVersion: process.env.webVersion 
       });
 
       const wbot: Session = new Client({
         session: sessionCfg,
-        webVersion: "2.2412.54v2",
+        webVersion: process.env.webVersion ||"2.2412.54v2",
         puppeteer: {
           browserWSEndpoint:
             `${process.env.CHROME_WS}${lauchOptions}` || undefined,
