@@ -1,5 +1,5 @@
 diff --git a/node_modules/whatsapp-web.js/index.d.ts b/node_modules/whatsapp-web.js/index.d.ts
-index 95eaf9c..6413d8d 100644
+index c53a972..4fa4a04 100644
 --- a/node_modules/whatsapp-web.js/index.d.ts
 +++ b/node_modules/whatsapp-web.js/index.d.ts
 @@ -436,6 +436,8 @@ declare namespace WAWebJS {
@@ -12,10 +12,10 @@ index 95eaf9c..6413d8d 100644
          webVersionCache?: WebCacheOptions,
          /** How many times should the qrcode be refreshed before giving up
 diff --git a/node_modules/whatsapp-web.js/src/Client.js b/node_modules/whatsapp-web.js/src/Client.js
-index d2e3e03..ff9a299 100644
+index 8e27416..b8cfdd5 100644
 --- a/node_modules/whatsapp-web.js/src/Client.js
 +++ b/node_modules/whatsapp-web.js/src/Client.js
-@@ -287,6 +287,7 @@ class Client extends EventEmitter {
+@@ -290,6 +290,7 @@ class Client extends EventEmitter {
          await this.authStrategy.beforeBrowserInitialized();
  
          const puppeteerOpts = this.options.puppeteer;
@@ -23,7 +23,7 @@ index d2e3e03..ff9a299 100644
          if (puppeteerOpts && puppeteerOpts.browserWSEndpoint) {
              browser = await puppeteer.connect(puppeteerOpts);
              page = await browser.newPage();
-@@ -328,6 +329,27 @@ class Client extends EventEmitter {
+@@ -331,6 +332,27 @@ class Client extends EventEmitter {
              };
          });
          

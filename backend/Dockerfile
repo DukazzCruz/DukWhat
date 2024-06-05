@@ -1,4 +1,4 @@
-FROM node:14 AS build-deps
+FROM node:18.20.3-slim AS build-deps
 
 RUN apt-get update && apt-get install -y wget && apt-get clean
 
@@ -30,9 +30,10 @@ COPY package*.json ./
 RUN npm install
 
 # Aplicar parches
-COPY patches/ ./patches/
-RUN npm run postinstall
+COPY patches/* ./patches/
+RUN npx patch-package
 
+# COPY ./public ./src ./.sequelizerc ./tsconfig.json ./
 COPY . .
 RUN npm run build
 
