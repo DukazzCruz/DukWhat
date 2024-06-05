@@ -48,6 +48,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
 
       const wwebVersion = process.env.CACHED_WAWEB_VERSION_TO_USE;
       const userDataDir = `/whatsappSessions/session-bd_${whatsapp.id}`;
+      const wwebVersionURL = `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const lauchOptions = process.env.CHROME_WS
         ? `?--user-data-dir=${userDataDir}`
@@ -59,12 +60,13 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         CHROME_WS: process.env.CHROME_WS,
         userDataDir: process.env.CHROME_WS ? userDataDir : undefined,
         wwebVersion,
-        webVersion: process.env.webVersion 
+        webVersion: process.env.webVersion,
+        wwebVersionURL
       });
 
       const wbot: Session = new Client({
         session: sessionCfg,
-        webVersion: process.env.webVersion ||"2.2412.54v2",
+        webVersion: process.env.webVersion || "2.2412.54v2",
         puppeteer: {
           browserWSEndpoint:
             `${process.env.CHROME_WS}${lauchOptions}` || undefined,
@@ -83,7 +85,7 @@ export const initWbot = async (whatsapp: Whatsapp): Promise<Session> => {
         sessionName,
         webVersionCache: {
           type: "remote",
-          remotePath: `https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/${wwebVersion}.html`
+          remotePath: process.env.webVersionCacheURL || wwebVersionURL
         }
       });
 
