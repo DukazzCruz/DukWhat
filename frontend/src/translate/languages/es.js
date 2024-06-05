@@ -1,16 +1,6 @@
 const messages = {
   es: {
     translations: {
-      messages: {
-        "types": {
-          "image": "Imagen",
-          "audio": "Audio",
-          "ptt": "Nota de Voz",
-          "video": "Video",
-          "sticker": "Sticker",
-          "document": "Documento"
-        }
-      },
       signup: {
         title: "Registro",
         toasts: {
@@ -67,9 +57,9 @@ const messages = {
         toasts: {
           deleted:
             "¡La conexión de WhatsApp ha sido borrada satisfactoriamente!",
-          sessionStarted: "Sesión de WhatsApp iniciada con éxito.",
-          sessionShutdown: "Sesión de WhatsApp apagada con éxito.",
-          sessionRestarted: "Sesión de WhatsApp reiniciada con éxito."
+            sessionStarted: "Sesión de WhatsApp iniciada con éxito.",
+            sessionShutdown: "Sesión de WhatsApp apagada con éxito.",
+            sessionRestarted: "Sesión de WhatsApp reiniciada con éxito."
         },
         confirmationModal: {
           deleteTitle: "Borrar",

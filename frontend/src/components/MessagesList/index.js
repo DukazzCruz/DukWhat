@@ -426,7 +426,7 @@ const MessagesList = ({ ticketId, isGroup }) => {
 
   const checkMessageMedia = (message) => {
     // Imprimir la URL del medio en la consola
-    // console.log("Media URL:", message.mediaUrl);
+    console.log("Media URL:", message.mediaUrl);
     if (message.mediaType === "sticker") {
       return (
         <img

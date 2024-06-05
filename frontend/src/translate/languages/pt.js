@@ -1,16 +1,6 @@
 const messages = {
   pt: {
     translations: {
-      "messages": {
-      "types": {
-        "image": "Imagem",
-        "audio": "Áudio",
-        "ptt": "Nota de Voz",
-        "video": "Vídeo",
-        "sticker": "Adesivo",
-        "document": "Documento"
-      }
-    },
       signup: {
         title: "Cadastre-se",
         toasts: {

@@ -13,6 +13,7 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Divider from "@material-ui/core/Divider";
 import Badge from "@material-ui/core/Badge";
+
 import { i18n } from "../../translate/i18n";
 
 import api from "../../services/api";
@@ -115,29 +116,6 @@ const useStyles = makeStyles(theme => ({
 		fontSize: "0.9em"
 	},
 }));
-
-const renderLastMessage = (lastMessage) => {
-	if (typeof lastMessage !== "string") {
-	  return lastMessage;
-	}
-	switch (lastMessage) {
-	  case "image":
-		return `📷 ${i18n.t("messages.types.image")}`;
-	  case "audio":
-		return `🎵 ${i18n.t("messages.types.audio")}`;
-	  case "ptt":
-		return `🎤 ${i18n.t("messages.types.ptt")}`;
-	  case "video":
-		return `📹 ${i18n.t("messages.types.video")}`;
-	  case "sticker":
-		return `😀 ${i18n.t("messages.types.sticker")}`;
-	  case "document":
-		return `📎 ${i18n.t("messages.types.document")}`;
-	  default:
-		return lastMessage;
-	}
-  };
-
 
 const TicketListItem = ({ ticket }) => {
 	const classes = useStyles();
@@ -255,8 +233,7 @@ const TicketListItem = ({ ticket }) => {
 								color="textSecondary"
 							>
 								{ticket.lastMessage ? (
-									<MarkdownWrapper>{renderLastMessage(ticket.lastMessage)}</MarkdownWrapper>
-									// <MarkdownWrapper>{ticket.lastMessage}</MarkdownWrapper>
+									<MarkdownWrapper>{ticket.lastMessage}</MarkdownWrapper>
 								) : (
 									<br />
 								)}

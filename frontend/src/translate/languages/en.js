@@ -1,16 +1,6 @@
 const messages = {
   en: {
     translations: {
-      "messages": {
-        "types": {
-          "image": "Image",
-          "audio": "Audio",
-          "ptt": "Voice Note",
-          "video": "Video",
-          "sticker": "Sticker",
-          "document": "Document"
-        }
-      },
       signup: {
         title: "Sign up",
         toasts: {
