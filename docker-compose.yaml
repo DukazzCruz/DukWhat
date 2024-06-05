@@ -13,6 +13,7 @@ services:
       - BACKEND_URL=${BACKEND_URL:-http://localhost}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost:3000}
       - CACHED_WAWEB_VERSION_TO_USE=${CACHED_WAWEB_VERSION_TO_USE}
+      - webVersion=${webVersion}
       - PROXY_PORT=${PROXY_PORT:-8080}
       - CHROME_WS=${CHROME_WS}
       - TZ
@@ -38,6 +39,7 @@ services:
       - REACT_APP_BACKEND_URL=${BACKEND_URL:-http://localhost}/
       - FRONTEND_SERVER_NAME=${FRONTEND_SERVER_NAME}
       - BACKEND_SERVER_NAME=${BACKEND_SERVER_NAME}
+      - REACT_APP_HOURS_CLOSE_TICKETS_AUTO=${REACT_APP_HOURS_CLOSE_TICKETS_AUTO}
     volumes:
       - ./ssl/certs/:/etc/nginx/ssl/
       - ./ssl/www/:/var/www/letsencrypt/

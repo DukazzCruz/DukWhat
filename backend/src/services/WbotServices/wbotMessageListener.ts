@@ -86,7 +86,6 @@ const verifyMediaMessage = async (
   contact: Contact
 ): Promise<Message> => {
   const quotedMsg = await verifyQuotedMessage(msg);
-
   const media = await msg.downloadMedia();
 
   if (!media) {
@@ -129,7 +128,7 @@ const verifyMediaMessage = async (
     id: msg.id.id,
     ticketId: ticket.id,
     contactId: msg.fromMe ? undefined : contact.id,
-    body: msg.body || !isImageMedia ? media.filename : "\n",
+    body: msg.body ? msg.body : isImageMedia ? media.filename: '',
     fromMe: msg.fromMe,
     read: msg.fromMe,
     mediaUrl: media.filename,
