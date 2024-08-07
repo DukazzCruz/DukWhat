@@ -41,7 +41,7 @@ const SendWhatsAppMedia = async ({
 
     const mediaOptions: MessageSendOptions = {
       caption: hasBody,
-      sendAudioAsVoice: true // media.mimetype.startsWith("audio/")
+      sendAudioAsVoice: true //TODO:CORREGIR LAS NOTAS DE VOZ // media.mimetype.startsWith("audio/")
     };
 
     // Determine if media should be sent as a document
