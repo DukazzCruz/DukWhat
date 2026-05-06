@@ -19,7 +19,7 @@ services:
     ports:
       - "${BROWSERLESS_PORT}:3000"  # Maps port 3000 inside the container to port 4000 on the host
     volumes:
-      - "/data/whatsappSessions:/whatsappSessions"
+      - "./data/whatsappSessions:/whatsappSessions"
     networks:
       - whaticket
       - whaticket1
