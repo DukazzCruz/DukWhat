@@ -1,24 +1,25 @@
 // src/services/WhatsappService/RestartWhatsAppService.ts
-import { getWbot, restartWbot } from "../../libs/wbot";
+import { whatsappProvider } from "../../providers/WhatsApp";
+import Whatsapp from "../../models/Whatsapp";
+import AppError from "../../errors/AppError";
 import { logger } from "../../utils/logger";
 
 const RestartWhatsAppService = async (whatsappId: string): Promise<void> => {
   const whatsappIDNumber: number = parseInt(whatsappId, 10);
 
   try {
-    const wbot = getWbot(whatsappIDNumber);
-    if (!wbot) {
-      throw new Error("No active session found for this ID.");
+    const whatsapp = await Whatsapp.findByPk(whatsappIDNumber);
+    if (!whatsapp) {
+      throw new AppError("WhatsApp not found.");
     }
 
-    await restartWbot(whatsappIDNumber);
+    whatsappProvider.removeSession(whatsappIDNumber);
+    await whatsappProvider.init(whatsapp);
     logger.info(`WhatsApp session for ID ${whatsappId} has been restarted.`);
   } catch (error) {
-    // Aquí solo logueamos el error, no lo lanzamos de nuevo
     logger.error(
       `Failed to restart WhatsApp session: ${(error as Error).message}`
     );
-    // Opcional: podrías realizar alguna otra acción, como notificar a un sistema de monitoreo
   }
 };
 

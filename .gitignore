@@ -2,6 +2,7 @@
 ssl/
 .env
 .wwebjs_auth
+.wwebjs_cache
 /data
 .vscode/
 .idea/

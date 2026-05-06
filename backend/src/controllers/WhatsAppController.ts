@@ -1,7 +1,6 @@
 // src/controllers/WhatsAppController.ts
 import { Request, Response } from "express";
 import { getIO } from "../libs/socket";
-import { initWbot, removeWbot, shutdownWbot } from "../libs/wbot";
 import { StartWhatsAppSession } from "../services/WbotServices/StartWhatsAppSession";
 
 import CreateWhatsAppService from "../services/WhatsappService/CreateWhatsAppService";
@@ -11,6 +10,7 @@ import ShowWhatsAppService from "../services/WhatsappService/ShowWhatsAppService
 import UpdateWhatsAppService from "../services/WhatsappService/UpdateWhatsAppService";
 import RestartWhatsAppService from "../services/WhatsappService/RestartWhatsAppService";
 import Whatsapp from "../models/Whatsapp";
+import { whatsappProvider } from "../providers/WhatsApp";
 
 interface WhatsappData {
   name: string;
@@ -125,7 +125,7 @@ export const remove = async (
   const { whatsappId } = req.params;
 
   await DeleteWhatsAppService(whatsappId);
-  removeWbot(+whatsappId);
+  whatsappProvider.removeSession(+whatsappId);
 
   const io = getIO();
   io.emit("whatsapp", {
@@ -168,7 +168,7 @@ export const shutdown = async (
   const { whatsappId } = req.params;
 
   try {
-    await shutdownWbot(whatsappId);
+    await whatsappProvider.logout(+whatsappId);
     const io = getIO();
     io.emit("whatsapp", {
       action: "update",
@@ -191,7 +191,7 @@ export const start = async (req: Request, res: Response): Promise<Response> => {
   if (!whatsapp) throw Error("no se encontro el whatsapp");
 
   try {
-    await initWbot(whatsapp); // Inicializa una nueva sesión
+    await StartWhatsAppSession(whatsapp);
     const io = getIO();
     io.emit("whatsapp", {
       action: "update",

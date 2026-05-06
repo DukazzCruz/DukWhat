@@ -1,9 +1,9 @@
 import AppError from "../../errors/AppError";
-import GetWbotMessage from "../../helpers/GetWbotMessage";
 import Contact from "../../models/Contact";
 import Message from "../../models/Message";
 import Ticket from "../../models/Ticket";
 import formatBody from "../../helpers/Mustache";
+import { whatsappProvider } from "../../providers/WhatsApp";
 
 const EditWhatsAppMessage = async (
   messageId: string,
@@ -35,11 +35,20 @@ const EditWhatsAppMessage = async (
   }
   const { ticket } = message;
 
-  const messageToEdit = await GetWbotMessage(ticket, messageId);
+  if (!ticket.whatsappId) {
+    throw new AppError("ERR_TICKET_NO_WHATSAPP");
+  }
+
+  const chatId = `${ticket.contact.number}@${ticket.isGroup ? "g" : "c"}.us`;
 
   try {
-    const res = await messageToEdit.edit(hasBody);
-    if (res === null) throw new Error("Can't edit");
+    await whatsappProvider.editMessage(
+      ticket.whatsappId,
+      chatId,
+      messageId,
+      message.fromMe,
+      hasBody
+    );
   } catch (err) {
     throw new AppError("ERR_EDITING_WAPP_MSG");
   }
