@@ -1520,13 +1520,24 @@ const fetchChatMessages = async (
 };
 
 const editMessage = async (
-  _sessionId: number,
-  _chatId: string,
-  _messageId: string,
-  _fromMe: boolean,
-  _newBody: string
+  sessionId: number,
+  chatId: string,
+  messageId: string,
+  fromMe: boolean,
+  newBody: string
 ): Promise<void> => {
-  throw new AppError("ERR_EDIT_MSG_NOT_SUPPORTED_BY_PROVIDER");
+  const wbot = getWbot(sessionId);
+
+  const msgKey: WAMessageKey = {
+    remoteJid: chatId,
+    id: messageId,
+    fromMe
+  };
+
+  await wbot.sendMessage(chatId, {
+    text: newBody,
+    edit: msgKey
+  } as AnyMessageContent);
 };
 
 export const WhaileysProvider: WhatsappProvider = {
